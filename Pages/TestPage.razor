@@ -1,0 +1,16 @@
+﻿@page "/testPage"
+
+<h1>Test Page Rounte</h1>
+
+<p>Test Page count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount2">Click me again</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount2()
+    {
+        currentCount = currentCount + 2;
+    }
+}

@@ -1,0 +1,90 @@
+﻿@page "/car"
+@using BlazorServer.Data
+@using BlazorServer.Services
+@using Microsoft.EntityFrameworkCore;
+@using Microsoft.AspNetCore.Mvc;
+@inject ICarServices CarServices
+@inject ApplicationDbContext _context
+@using BlazorServer.Model 
+
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <EditForm Model="@car" OnValidSubmit=@CreateAsync>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <p>
+                    <label>
+                        Name: 
+                        <InputText @bind-Value="car.Name" />
+                    </label>
+                </p>
+
+                <button class="btn btn-secondary" type="submit">Submit</button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th> </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Cars is not null)
+        {
+            @foreach (var item in Cars)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>
+                    <td > <a style="cursor:pointer" @onclick="() => DeleteAsync(item.Id)">Delete</a></td>
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>
+
+@code {
+
+    private List<Model.Car> Cars;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Cars = await CarServices.GetCarsAsync();
+    }
+
+    private Model.Car car = new();
+
+    string Status = "Not submitted";
+    private async Task CreateAsync()
+    {
+
+        Status = "Form submitted";
+        _context.Add(car);
+        await _context.SaveChangesAsync();
+        car = new();
+        await OnInitializedAsync();
+        // Process the valid form
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        var carTemp = await _context.Car.FindAsync(id);
+        _context.Remove(carTemp);
+        await _context.SaveChangesAsync();
+        
+        await OnInitializedAsync();
+        // Process the valid form
+    }
+}
