@@ -1,12 +1,33 @@
-﻿<AuthorizeView>
+﻿@using BlazorServer.Model;
+@using Microsoft.AspNetCore.Identity;
+@inject NavigationManager UriHelper
+@inject SignInManager<CustomUser>  _signInManager
+@inject UserManager<CustomUser> _userManager
+<AuthorizeView>
     <Authorized>
-        <a href="Identity/Account/Manage">Hello, @context.User.Identity.Name!</a>
-        <form method="post" action="Identity/Account/LogOut">
-            <button type="submit" class="nav-link btn btn-link">Log out</button>
+        <form action="Identity/Account/LogOut" id="logout">
         </form>
+        <li class="nav-item">
+            <a class="nav-link" href="Identity/Account/Manage">Hello, @context.User.Identity.Name!</a>
+        </li>
+        <li class="nav-item">
+            <NavLink class="nav-link" href="Identity/Account/Logout">Log out</NavLink>
+            <form action="Identity/Account/LogOut" id="logout">
+               
+            </form>
+        </li>
+
     </Authorized>
     <NotAuthorized>
-        <a href="Identity/Account/Register">Register</a>
-        <a href="Identity/Account/Login">Log in</a>
+        <li class="nav-item">
+            <a class="nav-link" href="Identity/Account/Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="Identity/Account/Login">Log in</a>
+        </li>
     </NotAuthorized>
 </AuthorizeView>
+
+@code{
+
+}

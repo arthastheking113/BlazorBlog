@@ -1,4 +1,4 @@
-using BlazorServer.Areas.Identity;
+
 using BlazorServer.Data;
 using BlazorServer.Model;
 using BlazorServer.Services;
@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using testBlazor5.Areas.Identity;
 
 namespace BlazorServer
 {
@@ -46,8 +48,11 @@ namespace BlazorServer
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<CustomUser>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
-            services.AddSingleton<WeatherForecastService>();
-            services.AddScoped<ICarServices, CarServices>();
+            services.AddTransient<ISlugService, BasicSlugService>();
+            services.AddTransient<IImageService, BasicImageService>();
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddScoped<IEmailSender, EmailService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

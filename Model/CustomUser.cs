@@ -23,9 +23,7 @@ namespace BlazorServer.Model
         public byte[] ImageData { get; set; }
         public string ContentType { get; set; }
 
-        public string Street { get; set; }
-        public string State { get; set; }
-        public string City { get; set; }
-        public string Zipcode { get; set; }
+
+        public virtual ICollection<PostComment> PostComments { get; set; }
     }
 }

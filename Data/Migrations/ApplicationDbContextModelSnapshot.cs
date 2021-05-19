@@ -19,19 +19,31 @@ namespace BlazorServer.Data.Migrations
                 .HasAnnotation("ProductVersion", "5.0.6")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("BlazorServer.Model.Car", b =>
+            modelBuilder.Entity("BlazorServer.Model.BlogCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(35)
+                        .HasColumnType("character varying(35)");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Car");
+                    b.ToTable("BlogCategory");
                 });
 
             modelBuilder.Entity("BlazorServer.Model.CustomUser", b =>
@@ -41,9 +53,6 @@ namespace BlazorServer.Data.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
-
-                    b.Property<string>("City")
-                        .HasColumnType("text");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -96,21 +105,12 @@ namespace BlazorServer.Data.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
-                    b.Property<string>("State")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Street")
-                        .HasColumnType("text");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
-
-                    b.Property<string>("Zipcode")
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -122,6 +122,111 @@ namespace BlazorServer.Data.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("BlazorServer.Model.PostCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Abstract")
+                        .HasColumnType("text");
+
+                    b.Property<int>("BlogCategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ContentType")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<byte[]>("ImageData")
+                        .HasColumnType("bytea");
+
+                    b.Property<bool>("IsproductionReady")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Slug")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlogCategoryId");
+
+                    b.ToTable("PostCategory");
+                });
+
+            modelBuilder.Entity("BlazorServer.Model.PostComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<DateTime>("CommentDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CustomUserId")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsModerated")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("Moderated")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ModeratedContent")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ModeratedReason")
+                        .HasColumnType("text");
+
+                    b.Property<int>("PostCategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("Update")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomUserId");
+
+                    b.HasIndex("PostCategoryId");
+
+                    b.ToTable("PostComment");
+                });
+
+            modelBuilder.Entity("BlazorServer.Model.Tag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("TagName")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -254,6 +359,49 @@ namespace BlazorServer.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("PostCategoryTag", b =>
+                {
+                    b.Property<int>("PostCategoriesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TagsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PostCategoriesId", "TagsId");
+
+                    b.HasIndex("TagsId");
+
+                    b.ToTable("PostCategoryTag");
+                });
+
+            modelBuilder.Entity("BlazorServer.Model.PostCategory", b =>
+                {
+                    b.HasOne("BlazorServer.Model.BlogCategory", "BlogCategory")
+                        .WithMany("PostCategories")
+                        .HasForeignKey("BlogCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BlogCategory");
+                });
+
+            modelBuilder.Entity("BlazorServer.Model.PostComment", b =>
+                {
+                    b.HasOne("BlazorServer.Model.CustomUser", "CustomUser")
+                        .WithMany("PostComments")
+                        .HasForeignKey("CustomUserId");
+
+                    b.HasOne("BlazorServer.Model.PostCategory", "PostCategory")
+                        .WithMany("PostComments")
+                        .HasForeignKey("PostCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CustomUser");
+
+                    b.Navigation("PostCategory");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -303,6 +451,36 @@ namespace BlazorServer.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("PostCategoryTag", b =>
+                {
+                    b.HasOne("BlazorServer.Model.PostCategory", null)
+                        .WithMany()
+                        .HasForeignKey("PostCategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BlazorServer.Model.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BlazorServer.Model.BlogCategory", b =>
+                {
+                    b.Navigation("PostCategories");
+                });
+
+            modelBuilder.Entity("BlazorServer.Model.CustomUser", b =>
+                {
+                    b.Navigation("PostComments");
+                });
+
+            modelBuilder.Entity("BlazorServer.Model.PostCategory", b =>
+                {
+                    b.Navigation("PostComments");
                 });
 #pragma warning restore 612, 618
         }

@@ -13,7 +13,9 @@ namespace BlazorServer.Data
             : base(options)
         {
         }
-        public DbSet<Car> Car { get; set; }
-
+        public DbSet<BlogCategory> BlogCategory { get; set; }
+        public DbSet<PostCategory> PostCategory { get; set; }
+        public DbSet<PostComment> PostComment { get; set; }
+        public DbSet<Tag> Tag { get; set; }
     }
 }
