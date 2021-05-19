@@ -7,7 +7,7 @@
 @inject ApplicationDbContext _context
 @using BlazorServer.Model
 
-
+<div id="@preloader" ></div>
 <div class="container">
     <div class="row">
         <div class="col">
@@ -58,10 +58,13 @@
 @code {
 
     private List<Model.Car> Cars;
+    private string preloader;
 
     protected override async Task OnInitializedAsync()
     {
+        preloader = "preloader";
         Cars = await CarServices.GetCarsAsync();
+        preloader = "";
     }
 
     private Model.Car car = new();
