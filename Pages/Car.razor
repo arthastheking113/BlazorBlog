@@ -5,7 +5,7 @@
 @using Microsoft.AspNetCore.Mvc;
 @inject ICarServices CarServices
 @inject ApplicationDbContext _context
-@using BlazorServer.Model 
+@using BlazorServer.Model
 
 
 <div class="container">
@@ -17,7 +17,7 @@
 
                 <p>
                     <label>
-                        Name: 
+                        Name:
                         <InputText @bind-Value="car.Name" />
                     </label>
                 </p>
@@ -47,7 +47,7 @@
                 <tr>
                     <td>@item.Id</td>
                     <td>@item.Name</td>
-                    <td > <a style="cursor:pointer" @onclick="() => DeleteAsync(item.Id)">Delete</a></td>
+                    <td> <a style="cursor:pointer" @onclick="() => DeleteAsync(item.Id)">Delete</a></td>
                 </tr>
             }
         }
@@ -83,7 +83,7 @@
         var carTemp = await _context.Car.FindAsync(id);
         _context.Remove(carTemp);
         await _context.SaveChangesAsync();
-        
+
         await OnInitializedAsync();
         // Process the valid form
     }
