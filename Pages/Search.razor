@@ -1,5 +1,5 @@
-﻿@page "/page/{page}"
-@page "/"
+﻿@page "/search/{search}"
+@page "/search/{search}/page/{page}"
 @using BlazorServer.Data
 @using Microsoft.EntityFrameworkCore
 @inject ApplicationDbContext _context
@@ -48,7 +48,11 @@
 
                         </div>
                     }
-                }
+            }
+            else
+            {
+                <h1>Sorry, there is no post with this search.</h1>
+            }
             </div>
             <!-- Pager-->
             <div class="row">
@@ -64,8 +68,8 @@
                                 {
                                     myClass = "btn-dark";
                                 }
-                                <input hidden type="text" @bind="page"   />
-                                <button  @onclick="() => GoToPage(loop1)" class="btn @myClass">@loop</button>
+                                <input hidden type="text" @bind="page" />
+                                <button @onclick="() => GoToPage(loop1)" class="btn @myClass">@loop</button>
                             }
                         }
 
@@ -77,14 +81,13 @@
             <div class="position-sticky" style="top: 2rem;">
 
                 <div class="p-4 mb-3">
-                    <EditForm Model="SearchModel" OnValidSubmit=@Search  class="ps-search--widget">
+                    <EditForm Model="NewSearch" OnValidSubmit=@SearchPost class="ps-search--widget">
 
-                        <input type="text" class="form-control" @bind="SearchModel.Search" placeholder="Search for...">
+                        <input type="text" class="form-control" @bind="NewSearch.Search" placeholder="Search for...">
 
-                        <button type="submit" ><i class="fas fa-search"></i></button>
+                        <button type="submit"><i class="fas fa-search"></i></button>
 
                     </EditForm>
-                   
 
                 </div>
                 <hr />
@@ -136,7 +139,7 @@
     private List<Model.BlogCategory> Categories;
     private List<Model.PostCategory> Posts;
     private List<Model.PostCategory> postSearch;
-    private Model.SearchModel SearchModel = new();
+    private Model.SearchModel NewSearch = new();
     private int CategoryId;
     private int pageSize;
     private int totalPage;
@@ -151,31 +154,49 @@
     [Parameter]
     public string category { get; set; }
 
-    private Model.SearchModel NewSearch = new();
 
     protected override async Task OnInitializedAsync()
     {
         Categories = await _context.BlogCategory.ToListAsync();
 
 
+        page = "";
         if (String.IsNullOrEmpty(page))
         {
             page = "1";
         }
+        pageINT = Int32.Parse(page);
+
         pageSize = 9;
         totalPage = 0;
         totalRecord = 0;
-        pageINT = Int32.Parse(page);
 
 
-        postSearch = await _context.PostCategory.Include(h => h.PostComments).Include(p => p.BlogCategory).Where(y => y.IsproductionReady).ToListAsync();
+        search = search.ToLower();
+        postSearch = await _context.PostCategory.Include(h => h.PostComments).Where(y => y.IsproductionReady).Where(x => x.Title.ToLower().Contains(search) ||
+                                                        x.Content.ToLower().Contains(search) ||
+                                                        x.Abstract.ToLower().Contains(search) ||
+                                                        x.BlogCategory.Name.ToLower().Contains(search) ||
+                                                        x.BlogCategory.Description.ToLower().Contains(search) ||
+                                                        x.PostComments.Any(c => c.Content.ToLower().Contains(search) ||
+                                                                            c.CustomUser.FirstName.ToLower().Contains(search) ||
+                                                                            c.CustomUser.LastName.ToLower().Contains(search) ||
+                                                                            c.CustomUser.Email.ToLower().Contains(search))).ToListAsync();
         postSearch = postSearch.OrderByDescending(c => c.UpdateDate).ToList();
         totalRecord = postSearch.Count;
         totalPage = Convert.ToInt32(totalRecord / pageSize) + 1;
         var skipCount = ((int)pageINT - 1) * pageSize;
         Posts = postSearch.Skip(skipCount).Take(pageSize).ToList();
 
+
+
+
+
+
+
+
     }
+
 
     private void GoToPage(int pageToNavigate)
     {
@@ -192,11 +213,9 @@
         Posts = postSearch.Skip(skipCount).Take(pageSize).ToList();
     }
 
-
-
-    private void  Search()
+    private  void SearchPost()
     {
-        NavigationManager.NavigateTo($"/search/{SearchModel.Search}");
+        NavigationManager.NavigateTo($"/search/{NewSearch.Search}");
     }
 
 

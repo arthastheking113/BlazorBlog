@@ -32,7 +32,7 @@ namespace BlazorServer.Services
         {
             if (imageData == null)
             {
-                return "https://placehold.it/750x300";
+                return "/assets/img/750x300.png";
             }
             var imageArray = Convert.ToBase64String(imageData);
             return $"data:{contentType};base64,{imageArray}";
@@ -41,7 +41,7 @@ namespace BlazorServer.Services
         {
             if (imageData == null)
             {
-                return "/img/avatar.png";
+                return "/assets/img/avatar.png";
             }
             var imageArray = Convert.ToBase64String(imageData);
             return $"data:{contentType};base64,{imageArray}";
@@ -54,6 +54,18 @@ namespace BlazorServer.Services
             }
             var imageArray = Convert.ToBase64String(imageData);
             return $"data:{contentType};base64,{imageArray}";
+        }
+
+        public byte[] EncodeImage(string url)
+        {
+            var image = url.IndexOf(',');
+            if (image >= 0)
+            {
+                var base64 = url.Substring(image + 1);
+                return Convert.FromBase64String(base64);
+            }
+            return null;
+
         }
     }
 }

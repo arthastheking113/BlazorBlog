@@ -10,6 +10,8 @@ namespace BlazorServer.Services
     {
         Task<byte[]> EncodeFileAsync(IFormFile image);
 
+        byte[] EncodeImage(string url);
+
         string DecodeFile(byte[] imageData, string contentType);
 
         string DecodeFileAvatar(byte[] imageData, string contentType);

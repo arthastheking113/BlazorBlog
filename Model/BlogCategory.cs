@@ -18,6 +18,7 @@ namespace BlazorServer.Model
         [DataType(DataType.Date)]
         public DateTime CreateDate { get; set; }
 
+        public string Slug { get; set; }
 
         public DateTime UpdateDate { get; set; }
 

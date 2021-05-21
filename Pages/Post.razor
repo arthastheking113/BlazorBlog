@@ -1,0 +1,300 @@
+﻿@using BlazorServer.Data
+@inject ApplicationDbContext _context
+@using Microsoft.EntityFrameworkCore
+@using BlazorServer.Services
+@inject IImageService _imageService
+@using Microsoft.AspNetCore.Identity
+@using BlazorServer.Model
+@inject SignInManager<CustomUser> SignInManager
+@inject UserManager<CustomUser> _userManager
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor _httpContextAccessor
+@page "/post"
+@page "/post/details/{slug}"
+
+
+<div id="@preloader"></div>
+<!-- Page Header-->
+@if (currentPost is not null)
+{
+    <header class="masthead" style="background-image: url('@_imageService.DecodeFile(currentPost.ImageData,currentPost.ContentType)')">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="post-heading">
+                        <h1>@currentPost.Title</h1>
+                        <h2 class="subheading">@currentPost.Abstract</h2>
+                        <span class="meta mb-3">
+                            Posted by
+                            <a target="_blank" href="https://duylanle-portfolio.netlify.app/">Duy Lan Le</a>
+                            on @currentPost.CreateDate.ToString("dd MMMM yyyy at hh:mm tt")
+                        </span>
+                        <span class="meta">
+                            <i class="fas fa-eye"></i> @currentPost.ViewCount <i style="padding-left:2%" class="fas fa-comment"></i> @Comments.Count
+
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Post Content-->
+    <article>
+        <div class="container-fluid" style="padding-right:5%;padding-left:5%">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col">
+                            @((MarkupString)currentPost.Content)
+                            <br />
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+
+                            @if (SignInManager.IsSignedIn(_httpContextAccessor.HttpContext.User))
+                            {
+
+
+                                    <br />
+                                    <div class="card my-4" style="border:1px solid rgb(28, 213, 219);">
+                                        <h5 class="card-header">Leave a Comment:</h5>
+
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <EditForm class="ps-form--comment" Model="@PostCommentToDataBase" OnValidSubmit=@CreateAsync>
+                                                    <h3>LEAVE A COMMENT</h3>
+                                                    <div class="row">
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+                                                            <div class="form-group">
+                                                                <InputTextArea @bind-Value="PostCommentToDataBase.Content" class="form-control"></InputTextArea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <button type="submit" style="background-color:rgb(28, 213, 219);border:none;" class="ps-btn btn btn-secondary ps-btn--sm ps-contact__submit">Send Message<i class="ps-icon-next"></i></button>
+                                                    </div>
+                                                </EditForm>
+                                            </div>
+                                        </div>
+                                    </div>
+                             
+
+                            }
+                            else
+                            {
+                                <hr />
+                                <h4 class="card-body text-center" style="border:1px solid rgb(28, 213, 219);">
+                                    <a href="/Identity/Account/Login?returnUrl=/post/details/@currentPost.Slug" class="text-white btn btn-secondary" style="background-color:rgb(28, 213, 219);border:none;">
+                                        Login To Comment
+                                    </a>
+                                </h4>
+                            }
+
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="ps-comments">
+                                <h3><i class="fa fa-comments mb-4"></i> Comment(@Comments.Count)</h3>
+                                @foreach (var comment in Comments.OrderByDescending(c => c.CommentDate))
+                                {
+                                    var currentTime = DateTime.Now;
+                                    <div class="ps-comments">
+
+                                        <div class="ps-comment">
+                                            <div class="ps-comment__thumbnail"><img class="img-fluid" src="@_imageService.DecodeFileAvatar(comment.CustomUser.ImageData,comment.CustomUser.ContentType)" alt=""></div>
+                                            <div class="ps-comment__content">
+
+                                                @if (!comment.IsModerated)
+                                                {
+                                                    var timeSpan = currentTime.Subtract(comment.CommentDate);
+                                                    var eslapseSecond = timeSpan.Seconds;
+                                                    var eslapseMinute = timeSpan.Minutes;
+                                                    var eslapseHours = timeSpan.Hours;
+                                                    var eslapseDate = timeSpan.Days;
+                                                    string commentdate;
+                                                    if (eslapseDate >= 1)
+                                                    {
+                                                        commentdate = eslapseDate.ToString() + " Days Ago";
+
+                                                    }
+                                                    else if (eslapseHours >= 1)
+                                                    {
+                                                        commentdate = eslapseHours.ToString() + " Hours Ago";
+                                                    }
+                                                    else if (eslapseMinute >= 1)
+                                                    {
+                                                        commentdate = eslapseMinute.ToString() + " Minutes Ago";
+                                                    }
+                                                    else
+                                                    {
+                                                        commentdate = eslapseSecond.ToString() + " Seconds Ago";
+                                                    }
+                                                    <header>
+                                                        <h4>@comment.CustomUser.FullName <span>@commentdate</span></h4>
+
+
+                                                    </header>
+                                                    <p>@comment.Content</p>
+
+                                                }
+                                                else
+                                                {
+                                                    var ModeratedDate = currentTime.Subtract(comment.Moderated);
+                                                    var SecondModeratedDate = ModeratedDate.Seconds;
+                                                    var MinuteModeratedDate = ModeratedDate.Minutes;
+                                                    var HoursModeratedDate = ModeratedDate.Hours;
+                                                    var DateModeratedDate = ModeratedDate.Days;
+                                                    string ModeratedTime;
+                                                    if (DateModeratedDate >= 1)
+                                                    {
+                                                        ModeratedTime = DateModeratedDate.ToString() + " Days Ago";
+
+                                                    }
+                                                    else if (HoursModeratedDate >= 1)
+                                                    {
+                                                        ModeratedTime = HoursModeratedDate.ToString() + " Hours Ago";
+                                                    }
+                                                    else if (MinuteModeratedDate >= 1)
+                                                    {
+                                                        ModeratedTime = MinuteModeratedDate.ToString() + " Minutes Ago";
+                                                    }
+                                                    else
+                                                    {
+                                                        ModeratedTime = SecondModeratedDate.ToString() + " Seconds Ago";
+                                                    }
+
+                                                    <header>
+                                                        <h4>@comment.CustomUser.FullName (Edited By Mod)<span>Reason: @comment.ModeratedReason - @ModeratedTime</span></h4>
+
+
+                                                    </header>
+                                                    <p>@comment.ModeratedContent (Edited)</p>
+
+                                                }
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+                <div class="col-md-3">
+                    <div class="position-sticky" style="top: 2rem;">
+
+                        <div class="p-4 mb-3">
+                            <h4 class="fst-italic">Search</h4>
+
+                            <p class="mb-0">Customize this section to tell your visitors a little bit about your publication, writers, content, or something else entirely. Totally up to you.</p>
+                        </div>
+                        <hr />
+                        <div class="p-4">
+                            <h4 class="fst-italic">Category</h4>
+
+                            <ol class="list-unstyled mb-0">
+                                @if (Categories is not null)
+                                {
+                                    @foreach (var item in Categories)
+                                    {
+                                        <li style="margin-bottom:5%"><a href="/category/@item.Slug">@item.Name</a></li>
+                                    }
+
+                                }
+
+                            </ol>
+                        </div>
+                        <hr />
+                        <div class="p-4">
+                            <h4 class="fst-italic">Contact Me</h4>
+
+                            <ol class="list-unstyled">
+
+                                <li style="margin-bottom:5%">
+                                    <a href="/about"><span class="iconify" data-icon="akar-icons:more-horizontal" data-inline="true"></span> About</a>
+                                </li>
+                                <li style="margin-bottom:5%">
+                                    <a href="/contact"><span class="iconify" data-icon="bx:bxs-phone-call" data-inline="true"></span> Contact</a>
+                                </li>
+                                <li style="margin-bottom:5%">
+                                    <a target="_blank" href="https://duylanle-portfolio.netlify.app/"><span class="iconify" data-icon="dashicons:portfolio" data-inline="true"></span> My Portfolio</a>
+                                </li>
+                                <li style="margin-bottom:5%">
+                                    <a target="_blank" href="https://github.com/arthastheking113/BlogTest"><span class="iconify" data-icon="akar-icons:github-fill" data-inline="true"></span> Github</a>
+                                </li>
+                                <li style="margin-bottom:5%">
+                                    <a target="_blank" href="https://www.linkedin.com/in/duy-lan-le-445262163/"><span class="iconify" data-icon="akar-icons:linkedin-fill" data-inline="true"></span> Linkedin</a>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+
+}
+
+
+@code {
+    [Parameter]
+    public string slug { get; set; }
+    private string preloader;
+    public Model.PostCategory currentPost;
+    private List<Model.BlogCategory> Categories;
+    private List<Model.PostComment> Comments;
+    private Model.CustomUser User;
+    public Model.PostComment PostCommentToDataBase;
+
+    protected override async Task OnInitializedAsync()
+    {
+        PostCommentToDataBase = new Model.PostComment();
+        preloader = "preloader";
+        Categories = await _context.BlogCategory.ToListAsync();
+        currentPost = await _context.PostCategory
+            .Include(p => p.BlogCategory)
+            .Include(m => m.PostComments)
+            .ThenInclude(b => b.CustomUser)
+            .FirstOrDefaultAsync(m => m.Slug == slug);
+
+        currentPost.ViewCount++;
+        _context.Update(currentPost);
+        await _context.SaveChangesAsync();
+        await GetCommentAsync();
+        preloader = "";
+
+    }
+
+
+    private async Task GetCommentAsync()
+    {
+        Comments = await _context.PostComment.Where(c => c.PostCategoryId == currentPost.Id).ToListAsync();
+    }
+
+
+    private async Task CreateAsync()
+    {
+
+        User = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+        PostCommentToDataBase.CommentDate = DateTime.Now;
+        PostCommentToDataBase.Update = PostCommentToDataBase.CommentDate;
+        PostCommentToDataBase.CustomUserId = User.Id;
+        PostCommentToDataBase.PostCategoryId = currentPost.Id;
+        _context.Add(PostCommentToDataBase);
+        await _context.SaveChangesAsync();
+        await GetCommentAsync();
+        PostCommentToDataBase = new Model.PostComment();
+    }
+}

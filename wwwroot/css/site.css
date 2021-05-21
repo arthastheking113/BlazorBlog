@@ -358,11 +358,7 @@ a {
     background-color: transparent;
 }
 
-    a:hover {
-        color: #004655;
-        text-decoration: underline;
-    }
-
+ 
     a:not([href]):not([class]) {
         color: inherit;
         text-decoration: none;
@@ -3373,9 +3369,9 @@ input[type=button].btn-block {
     color: #212529;
     text-align: left;
     list-style: none;
-    background-color: #fff;
+    background-color: #fff0;
     background-clip: padding-box;
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    border: none;
     border-radius: 0.25rem;
 }
 
@@ -10823,9 +10819,7 @@ a {
     color: #212529;
 }
 
-    a:focus, a:hover {
-        color: #0085A1;
-    }
+
 
 blockquote {
     font-style: italic;
@@ -10950,7 +10944,7 @@ img::-moz-selection {
         }
 
             #mainNav .navbar-nav > li.nav-item > a:focus, #mainNav .navbar-nav > li.nav-item > a:hover {
-                color: rgba(255, 255, 255, 0.8);
+              
             }
 }
 
@@ -10985,7 +10979,7 @@ img::-moz-selection {
             }
 
                 #mainNav.is-fixed .navbar-nav > li.nav-item > a:focus, #mainNav.is-fixed .navbar-nav > li.nav-item > a:hover {
-                    color: #0085A1;
+                 
                 }
 
         #mainNav.is-visible {
@@ -11204,5 +11198,209 @@ header.masthead .post-heading .meta {
 @media only screen and (min-width: 768px) {
     .post-preview > a > .post-title {
         font-size: 36px;
+    }
+}
+
+.category-text {
+    color: #00000080;
+}
+    .category-text:hover {
+        color: #fff;
+    }
+
+@media only screen and (min-width: 768px) {
+    .category-text {
+        color: #fff;
+    }
+}
+
+
+.center222 {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 55%;
+}
+
+
+.ps-icon-search:before {
+    content: "\e905";
+}
+.ps-search--widget {
+    position: relative;
+}
+
+    .ps-search--widget > input {
+        padding: 0 20px;
+        border: none;
+        height: 40px;
+        background-color: #e8e8e8;
+        -webkit-border-radius: 40px;
+        -moz-border-radius: 40px;
+        -ms-border-radius: 40px;
+        border-radius: 40px;
+        font-size: 13px;
+        color: #767779;
+    }
+
+        .ps-search--widget > input::-webkit-input-placeholder {
+            font-family: "Montserrat", sans-serif;
+            font-size: 13px;
+            color: #adadad;
+        }
+
+        .ps-search--widget > input::-moz-placeholder {
+            font-family: "Montserrat", sans-serif;
+            font-size: 13px;
+            color: #adadad;
+        }
+
+        .ps-search--widget > input:-moz-placeholder {
+            font-family: "Montserrat", sans-serif;
+            font-size: 13px;
+            color: #adadad;
+        }
+
+        .ps-search--widget > input:-ms-input-placeholder {
+            font-family: "Montserrat", sans-serif;
+            font-size: 13px;
+            color: #adadad;
+        }
+
+    .ps-search--widget > button {
+        right: 15px;
+        color: #000;
+        font-size: 15px;
+        border: none;
+        background-color: transparent;
+        position: absolute;
+        top: 50%;
+        -webkit-transform: translateY(-50%);
+        -moz-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        -o-transform: translateY(-50%);
+        transform: translateY(-50%);
+        -webkit-transition: all 0.4s ease;
+        -moz-transition: all 0.4s ease;
+        transition: all 0.4s ease;
+    }
+
+        .ps-search--widget > button:hover {
+            color: #2AC37D;
+        }
+
+.ps-widget--search {
+    border-bottom: none;
+}
+
+
+.ps-comment {
+    margin-bottom: 50px;
+    display: -webkit-box;
+    display: -moz-box;
+    display: box;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-flow: row nowrap;
+    -moz-flex-flow: row nowrap;
+    flex-flow: row nowrap;
+}
+
+    .ps-comment .ps-comment__thumbnail {
+        min-width: 100px;
+        width: 100px;
+        padding-right: 20px;
+    }
+
+        .ps-comment .ps-comment__thumbnail img {
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            -ms-border-radius: 50%;
+            border-radius: 50%;
+        }
+
+    .ps-comment .ps-comment__content {
+        padding: 20px;
+        -webkit-border-radius: 0 20px 0 20px;
+        -moz-border-radius: 0 20px 0 20px;
+        -ms-border-radius: 0 20px 0 20px;
+        border-radius: 0 20px 0 20px;
+        background-color: #f3f3f3;
+    }
+
+        .ps-comment .ps-comment__content > header {
+            margin-bottom: 10px;
+        }
+
+            .ps-comment .ps-comment__content > header::after {
+                clear: both;
+                content: "";
+                display: table;
+            }
+
+            .ps-comment .ps-comment__content > header h4 {
+                display: inline-block;
+                font-family: "Archivo Narrow", sans-serif;
+                font-size: 14px;
+                font-weight: 700;
+                color: #29203c;
+            }
+
+                .ps-comment .ps-comment__content > header h4 span {
+                    margin-left: 20px;
+                    font-family: Montserrat;
+                    font-size: 14px;
+                    line-height: 1.8em;
+                    color: #989898;
+                }
+
+            .ps-comment .ps-comment__content > header > a {
+                display: inline-block;
+                float: right;
+                font-family: "Archivo Narrow", sans-serif;
+                font-weight: 700;
+                font-size: 16px;
+                color: #2ac37d;
+                text-transform: uppercase;
+            }
+
+                .ps-comment .ps-comment__content > header > a i {
+                    margin-left: 10px;
+                }
+
+                .ps-comment .ps-comment__content > header > a:hover {
+                    color: #000;
+                }
+
+.ps-comment--reply {
+    margin-left: 100px;
+}
+
+@media (max-width: 640px) {
+    .ps-comment {
+        display: block;
+    }
+
+        .ps-comment .ps-comment__thumbnail {
+            width: 60px;
+            margin-bottom: 15px;
+        }
+
+            .ps-comment .ps-comment__thumbnail img {
+                border: 5px solid #f3f3f3;
+            }
+
+        .ps-comment .ps-comment__content {
+            width: 100%;
+        }
+
+            .ps-comment .ps-comment__content > header > a {
+                float: none;
+            }
+
+    .ps-comment--reply {
+        margin-left: 30px;
     }
 }

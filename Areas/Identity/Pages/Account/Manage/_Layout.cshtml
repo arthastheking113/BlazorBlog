@@ -8,21 +8,34 @@
         Layout = "/Areas/Identity/Pages/_Layout.cshtml";
     }
 }
+<header class="masthead" style="background-color:#1cd5db;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto" style="font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+                <div class="site-heading" style="padding: 28px 0;">
 
-<h2>Manage your account</h2>
-
-<div>
-    <h4>Change your account settings</h4>
-    <hr />
-    <div class="row">
-        <div class="col-md-3">
-            <partial name="_ManageNav" />
+                </div>
+            </div>
         </div>
-        <div class="col-md-9">
-            @RenderBody()
+    </div>
+</header>
+<div class="container">
+    <h2>Manage your account</h2>
+
+    <div>
+        <h4>Change your account settings</h4>
+        <hr />
+        <div class="row">
+            <div class="col-md-3">
+                <partial name="_ManageNav" />
+            </div>
+            <div class="col-md-9">
+                @RenderBody()
+            </div>
         </div>
     </div>
 </div>
+
 
 @section Scripts {
     @RenderSection("Scripts", required: false)

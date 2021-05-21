@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using testBlazor5.Areas.Identity;
-
 namespace BlazorServer
 {
     public class Startup
@@ -46,13 +45,15 @@ namespace BlazorServer
              .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddControllersWithViews();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<CustomUser>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddTransient<ISlugService, BasicSlugService>();
             services.AddTransient<IImageService, BasicImageService>();
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddScoped<IEmailSender, EmailService>();
-
+            services.AddMvc();
+            //services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,9 +80,20 @@ namespace BlazorServer
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+               
+                endpoints.MapRazorPages();
+
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
+
+                endpoints.MapControllerRoute(
+                   name: "default",
+                   pattern: "{controller=categories}/{action=create}/{id?}");
+                endpoints.MapRazorPages();
+
+                endpoints.MapControllers();
+
+
             });
         }
     }

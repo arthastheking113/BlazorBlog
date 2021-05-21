@@ -1,0 +1,141 @@
+﻿@page "/post/manage"
+@using BlazorServer.Data
+@inject ApplicationDbContext _context
+@using Microsoft.EntityFrameworkCore;
+@using BlazorServer.Services
+@using Microsoft.AspNetCore.Components.Forms;
+@using System.Threading.Tasks
+@using System.IO
+@using System;
+@inject ISlugService _slugService
+@inject IImageService _imageService
+@inject IJSRuntime JSRuntime
+
+<div id="@preloader"></div>
+<header class="masthead" style="background-color:#1cd5db;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto" style="font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+                <div class="site-heading" style="padding: 28px 0;">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col text-center">
+            <a class="btn btn-secondary" href="/PostCategories/Create">Create New Post</a>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <hr />
+    <div class="row">
+        <div class="col">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 16.66%">Image</th>
+                            <th>Title</th>
+                            <th>Abstract</th>
+                            <th>Content</th>
+                            <th>Ready?</th>
+                            <th>Adjustment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Posts is not null)
+                        {
+                            @foreach (var item in Posts)
+                            {
+                                <tr>
+                                    <td><img class="img-fluid" src="@_imageService.DecodeFile(item.ImageData,item.ContentType)" /></td>
+                                    <td>@item.Title</td>
+                                    <td>@item.Abstract</td>
+                                    <td>@item.Content</td>
+                                    <td>@item.IsproductionReady</td>
+                                    <td>
+                                        <a href="/post/details/@item.Slug">View</a> | 
+                                        <a style="cursor:pointer" @onclick="() => DeleteAsync(item.Id)">Delete</a> | 
+                                        <a href="/PostCategories/Edit/@item.Id">Edit</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private List<Model.PostCategory> Posts;
+    private List<Model.BlogCategory> Categories;
+    private string preloader;
+    private byte[] ImageUpload;
+    private string ContentType;
+    protected override async Task OnInitializedAsync()
+    {
+
+        preloader = "preloader";
+        Posts = await _context.PostCategory.ToListAsync();
+        Categories = await _context.BlogCategory.ToListAsync();
+        preloader = "";
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //await JSRuntime.InvokeVoidAsync("runSumernote");
+
+        }
+    }
+
+
+    public async Task ValueChange(InputFileChangeEventArgs e)
+    {
+        IBrowserFile imgFile = e.File;
+        var buffers = new byte[imgFile.Size];
+        await imgFile.OpenReadStream().ReadAsync(buffers);
+        ImageUpload = buffers.ToArray();
+        ContentType = imgFile.ContentType;
+    }
+
+    private Model.PostCategory newPost = new();
+
+
+    private async Task CreateAsync()
+    {
+        var currentTime = DateTime.Now;
+        newPost.CreateDate = currentTime;
+        newPost.UpdateDate = currentTime;
+        newPost.Slug = _slugService.URLFriendly(newPost.Title);
+        newPost.ImageData = ImageUpload;
+        newPost.ContentType = ContentType;
+        _context.Add(newPost);
+        await _context.SaveChangesAsync();
+        newPost = new();
+        await OnInitializedAsync();
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        var postTemp = await _context.PostCategory.FindAsync(id);
+        _context.Remove(postTemp);
+        await _context.SaveChangesAsync();
+
+        await OnInitializedAsync();
+    }
+
+
+}

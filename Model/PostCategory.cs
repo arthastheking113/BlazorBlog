@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -34,6 +36,9 @@ namespace BlazorServer.Model
 
         //[Display(Name = "Comment")]
         //public int CountComment { get; set; }
+        [NotMapped]
+        public IFormFile FormFile { get; set; }
+
 
         [Display(Name = "Category")]
         public int BlogCategoryId { get; set; }

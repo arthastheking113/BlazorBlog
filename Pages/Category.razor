@@ -1,0 +1,111 @@
+﻿@using BlazorServer.Data
+@inject ApplicationDbContext _context
+@using Microsoft.EntityFrameworkCore
+@using BlazorServer.Services
+@inject ISlugService _slugService 
+@page "/category/manage"
+
+<div id="@preloader"></div>
+<header class="masthead" style="background-color:#1cd5db;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto" style="font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+                <div class="site-heading" style="padding: 28px 0;">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container">
+    <div class="row">
+        <div class="col" style="padding-left:20%;padding-right:20%;">
+            <h4 class="text-center">Create new category</h4>
+            <EditForm Model="@NewCategory" OnValidSubmit=@CreateAsync>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="form-group">
+                    <label> Name:</label>
+                    <InputText class="form-control" @bind-Value="NewCategory.Name" />
+                </div>
+                <div class="form-group">
+                    <label> Description:</label>
+                    <InputText class="form-control" @bind-Value="NewCategory.Description" />
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-secondary btn-block" type="submit">Add New Category</button>
+                </div>
+               
+            </EditForm>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Adjustment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Categories is not null)
+                        {
+                            @foreach (var item in Categories)
+                            {
+                                <tr>
+                                    <td>@item.Name</td>
+                                    <td>@item.Description</td>
+                                    <td> <a style="cursor:pointer" @onclick="() => DeleteAsync(item.Id)">Delete</a></td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@code {
+    private List<Model.BlogCategory> Categories;
+    private string preloader;
+
+    protected override async Task OnInitializedAsync()
+    {
+        preloader = "preloader";
+        Categories = await _context.BlogCategory.ToListAsync();
+        preloader = "";
+    }
+
+    private Model.BlogCategory NewCategory = new();
+
+
+    private async Task CreateAsync()
+    {
+        var currentTime = DateTime.Now;
+        NewCategory.CreateDate = currentTime;
+        NewCategory.UpdateDate = currentTime;
+        NewCategory.Slug = _slugService.URLFriendly(NewCategory.Name);
+        _context.Add(NewCategory);
+        await _context.SaveChangesAsync();
+        NewCategory = new();
+        await OnInitializedAsync();
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        var categoryTemp = await _context.BlogCategory.FindAsync(id);
+        _context.Remove(categoryTemp);
+        await _context.SaveChangesAsync();
+
+        await OnInitializedAsync();
+    }
+}
