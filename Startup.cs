@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
@@ -52,6 +53,7 @@ namespace BlazorServer
             services.AddTransient<IImageService, BasicImageService>();
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddScoped<IEmailSender, EmailService>();
+
             services.AddMvc();
             //services.AddHttpContextAccessor();
         }
