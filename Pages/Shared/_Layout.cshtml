@@ -76,6 +76,12 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/contact"><span class="iconify" data-icon="bx:bxs-phone-call" data-inline="true"></span> Contact</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" target="_blank" href="https://github.com/arthastheking113/BlazorServer"><span class="iconify" data-icon="akar-icons:github-fill" data-inline="true"></span> Github Repository</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" target="_blank" href="https://duylanle-portfolio.netlify.app/"><span class="iconify" data-icon="dashicons:portfolio" data-inline="true"></span> My Portfolio</a>
+                    </li>
                     @if (User.Identity.IsAuthenticated)
                     {
                         <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post" id="logout">
