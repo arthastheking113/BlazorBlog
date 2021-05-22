@@ -6,6 +6,7 @@
 @using BlazorServer.Services
 @inject IImageService _imageService
 @inject NavigationManager NavigationManager
+<div id="@preloader"></div>
     <!-- Page Header-->
 <header class="masthead" style="background-image: url('assets/img/home-bg.jpg')">
     <div class="overlay"></div>
@@ -135,7 +136,7 @@
     private List<Model.PostCategory> Posts;
     private List<Model.PostCategory> postSearch;
     private Model.SearchModel NewSearch = new();
-
+    private string preloader;
     private int CategoryId;
     private int pageSize;
     private int totalPage;
@@ -153,6 +154,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+
+        preloader = "preloader";
         Categories = await _context.BlogCategory.ToListAsync();
 
 
@@ -185,10 +188,7 @@
         Posts = postSearch.Skip(skipCount).Take(pageSize).ToList();
 
 
-
-
-
-
+        preloader = "";
 
     }
 
