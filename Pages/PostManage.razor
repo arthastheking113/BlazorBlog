@@ -43,7 +43,7 @@
                             <th style="width: 16.66%">Image</th>
                             <th>Title</th>
                             <th>Abstract</th>
-                            <th>Content</th>
+                            <th>Category</th>
                             <th>Ready?</th>
                             <th>Adjustment</th>
                         </tr>
@@ -57,7 +57,7 @@
                                     <td><img class="img-fluid" src="@_imageService.DecodeFile(item.ImageData,item.ContentType)" /></td>
                                     <td>@item.Title</td>
                                     <td>@item.Abstract</td>
-                                    <td>@item.Content</td>
+                                    <td>@item.BlogCategory.Name</td>
                                     <td>@item.IsproductionReady</td>
                                     <td>
                                         <a href="/post/details/@item.Slug">View</a> | 
@@ -86,7 +86,7 @@
     {
 
         preloader = "preloader";
-        Posts = await _context.PostCategory.ToListAsync();
+        Posts = await _context.PostCategory.Include(c => c.BlogCategory).ToListAsync();
         Categories = await _context.BlogCategory.ToListAsync();
         preloader = "";
 
