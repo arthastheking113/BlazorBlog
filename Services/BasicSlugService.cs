@@ -70,6 +70,11 @@ namespace BlazorServer.Services
             return !dbContext.PostCategory.Any(cp => cp.Slug == slug);
         }
 
+        public bool IsUniqueCategory(ApplicationDbContext dbContext, string slug)
+        {
+            return !dbContext.BlogCategory.Any(cp => cp.Slug == slug);
+        }
+
 
         private string RemapInternationalCharToAscii(char c)
         {

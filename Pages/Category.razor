@@ -3,6 +3,7 @@
 @using Microsoft.EntityFrameworkCore
 @using BlazorServer.Services
 @inject ISlugService _slugService 
+
 @page "/category/manage"
 
 <div id="@preloader"></div>
@@ -22,20 +23,24 @@
         <div class="col" style="padding-left:20%;padding-right:20%;">
             <h4 class="text-center">Create new category</h4>
             <EditForm Model="@NewCategory" OnValidSubmit=@CreateAsync>
+                <h5 class="text-danger">@errorMessage</h5>
                 <DataAnnotationsValidator />
                 <ValidationSummary />
+                <ValidationMessage For="@(() => NewCategory.Slug)" />
                 <div class="form-group">
                     <label> Name:</label>
                     <InputText class="form-control" @bind-Value="NewCategory.Name" />
                 </div>
+                <ValidationMessage For="@(() => NewCategory.Name)" />
                 <div class="form-group">
                     <label> Description:</label>
                     <InputText class="form-control" @bind-Value="NewCategory.Description" />
                 </div>
+                <ValidationMessage For="@(() => NewCategory.Name)" />
                 <div class="form-group">
                     <button class="btn btn-secondary btn-block" type="submit">Add New Category</button>
                 </div>
-               
+
             </EditForm>
         </div>
     </div>
@@ -77,7 +82,7 @@
 @code {
     private List<Model.BlogCategory> Categories;
     private string preloader;
-
+    private string errorMessage;
     protected override async Task OnInitializedAsync()
     {
         preloader = "preloader";
@@ -94,10 +99,20 @@
         NewCategory.CreateDate = currentTime;
         NewCategory.UpdateDate = currentTime;
         NewCategory.Slug = _slugService.URLFriendly(NewCategory.Name);
-        _context.Add(NewCategory);
-        await _context.SaveChangesAsync();
-        NewCategory = new();
-        await OnInitializedAsync();
+        if (_slugService.IsUniqueCategory(_context, NewCategory.Slug))
+        {
+            NewCategory.Slug = NewCategory.Slug;
+            _context.Add(NewCategory);
+            await _context.SaveChangesAsync();
+            NewCategory = new();
+            await OnInitializedAsync();
+            errorMessage = "";
+        }
+        else
+        {
+            errorMessage = "This title cannot be used as it results in a duplicate Slug!";
+        }
+
     }
 
     private async Task DeleteAsync(int id)

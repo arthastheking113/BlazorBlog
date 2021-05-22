@@ -11,5 +11,7 @@ namespace BlazorServer.Services
         string URLFriendly(string title);
 
         bool IsUnique(ApplicationDbContext dbContext, string slug);
+        bool IsUniqueCategory(ApplicationDbContext dbContext, string slug);
+        
     }
 }
