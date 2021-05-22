@@ -1,0 +1,150 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using BlazorServer.Model
+@inject SignInManager<CustomUser> SignInManager
+@inject UserManager<CustomUser> _userManager
+@using BlazorServer.Services
+@using Microsoft.AspNetCore.Identity.UI.Services;
+@inject IEmailSender _emailSender
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor _httpContextAccessor
+@page "/contact"
+
+<header class="masthead" style="background-image: url('/assets/img/contact-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="page-heading">
+                    <h1 style="color:white;">Contact Me</h1>
+                    <span style="color:white;" class="subheading">Send me your message</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container">
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-lg-8 col-md-10 mx-auto">
+            @if (!MessageSent)
+            {
+                <AuthorizeView>
+                    <Authorized>
+                        <div class="row">
+                            <div class="col">
+                                <EditForm Model="ContactMe" Context="AuthContact" OnValidSubmit="SendMessageAsync">
+                                    <DataAnnotationsValidator />
+                                    <div class="control-group">
+                                        <div class="form-group floating-label-form-group controls">
+                                            <InputText @bind-Value="ContactMe.Subject" class="form-control" placeholder="Subject" />
+                                            <span asp-validation-for="Subject" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div class="control-group">
+                                        <div class="form-group">
+                                            <InputTextArea @bind-Value="ContactMe.Message" asp-for="Message" class="form-control"></InputTextArea>
+                                            <span asp-validation-for="Message" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 text-center">
+                                        <button class="btn btn-lg btn-secondary" style="background-color:grey;font-size: 14px;font-weight: 800;letter-spacing: 1px;text-transform: uppercase;border-radius: 0;font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;" type="submit">Send Message</button>
+                                    </div>
+
+                                </EditForm>
+                            </div>
+                        </div>
+                    </Authorized>
+                    <NotAuthorized>
+                        <div class="row">
+                            <div class="col">
+                                <EditForm Model="ContactMe" Context="AuthContact" OnValidSubmit="SendMessageAsync">
+                                    <DataAnnotationsValidator />
+                                    <div class="control-group">
+                                        <div class="form-group floating-label-form-group controls">
+                                            <InputText @bind-Value="ContactMe.Name" class="form-control" placeholder="Your Name" />
+                                        </div>
+                                    </div>
+
+                                    <div class="control-group">
+                                        <div class="form-group floating-label-form-group controls">
+                                            <InputText @bind-Value="ContactMe.Email" class="form-control" placeholder="Your Email" />
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="control-group">
+                                        <div class="form-group floating-label-form-group controls">
+                                            <InputText @bind-Value="ContactMe.Subject" class="form-control" placeholder="Subject" />
+                                            <span asp-validation-for="Subject" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div class="control-group">
+                                        <div class="form-group">
+                                            <InputTextArea @bind-Value="ContactMe.Message" asp-for="Message" class="form-control"></InputTextArea>
+                                            <span asp-validation-for="Message" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 text-center">
+                                        <button class="btn btn-lg btn-secondary" style="background-color:grey;font-size: 14px;font-weight: 800;letter-spacing: 1px;text-transform: uppercase;border-radius: 0;font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;" type="submit">Send Message</button>
+                                    </div>
+
+                                </EditForm>
+                            </div>
+
+                        </div>
+                    </NotAuthorized>
+                </AuthorizeView>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col text-center">
+                        <h1 class="mb-2">Congratulation!</h1>
+                        <h2 class="mb-2">You successfully sent me your message</h2>
+                        <h3 >I will reply back to you as soon as possible</h3>
+                        <hr />
+                        <a href="/" class="btn btn-secondary btn-lg">Go Back To Home Page</a>
+                    </div>
+                </div>
+               
+            }
+
+
+        </div>
+        <div class="col-2"></div>
+    </div>
+</div>
+
+<br />
+
+
+@code {
+    private Model.ContactModel ContactMe = new();
+    private bool MessageSent = false;
+
+    public async Task SendMessageAsync()
+    {
+        if (_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+        {
+            var User = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+            ContactMe.Email = User.Email;
+            ContactMe.Name = User.FullName;
+        }
+        string myEmail = "arthastheking113@gmail.com";
+
+        string subject = $"{ContactMe.Name} Just Send You A Message About {ContactMe.Subject}";
+
+        string body = $"Message From {ContactMe.Email}: {ContactMe.Message}";
+
+        string customberSubject = $"I Just Received Your Message From Lan's Blog With Name {ContactMe.Name} About {ContactMe.Subject}";
+        string customberBody = $"Hi, <br/>Hope you have a great day. I just received your message from {ContactMe.Email} about: {ContactMe.Subject}. I will contact back to you as soon as possible.";
+
+        await _emailSender.SendEmailAsync(myEmail, subject, body);
+
+        await _emailSender.SendEmailAsync(ContactMe.Email, customberSubject, customberBody);
+        MessageSent = true;
+
+    }
+
+}

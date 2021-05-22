@@ -62,15 +62,25 @@
                             }
                         </div>
                     </li>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="/category/manage">
+                                Category Manage
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/post/manage">
+                                Post Manage
+                            </a>
+                        </li>
+
+                    }
                     <li class="nav-item">
-                        <a class="nav-link" href="/category/manage">
-                            Category Manage
-                        </a>
+                        <a class="nav-link" href="/about"><span class="iconify" data-icon="akar-icons:more-horizontal" data-inline="true"></span> About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/post/manage">
-                            Post Manage
-                        </a>
+                        <a class="nav-link" href="/contact"><span class="iconify" data-icon="bx:bxs-phone-call" data-inline="true"></span> Contact</a>
                     </li>
                     @if (User.Identity.IsAuthenticated)
                     {
@@ -88,10 +98,10 @@
                     else
                     {
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register" asp-route-returnUrl="@Url.Page("/", new { area = "" })">Register</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Log in</a>
+                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Url.Page("/", new { area = "" })">Log in</a>
                         </li>
                     }
 
@@ -112,7 +122,7 @@
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
     <script src="~/js/summernote.js"></script>
     <script>
-       
+
         function Logout() {
             document.getElementById('logout').submit();
         }
