@@ -4,13 +4,41 @@
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
-
+@using BlazorServer.Services
+@inject IImageService imageService
 <h4>@ViewData["Title"]</h4>
 <partial name="_StatusMessage" model="Model.StatusMessage" />
 <div class="row">
     <div class="col-md-6">
-        <form id="profile-form" method="post">
+        <form id="profile-form" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="col text-center">
+                <img src="@imageService.DecodeFileAvatar(Model.Input.ImageData,Model.Input.ContentType)" class="rounded-circle" style="width:30%" />
+            </div>
+
+            @if (Model.Input.ImageData != null && Model.Input.ContentType != null)
+            {
+                <input type="hidden" name="imageData" value="@Convert.ToBase64String(Model.Input.ImageData)" class="form-control" />
+                <input type="hidden" name="contentType" value="@Model.Input.ContentType" class="form-control" />
+            }
+
+            <div class="form-group">
+                <label asp-for="Input.ImageData" class="control-label"></label>
+                <input type="file" name="image" />
+                <span asp-validation-for="Input.ImageData" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.FirstName"></label>
+                <input asp-for="Input.FirstName" value="@Model.Input.FirstName" class="form-control" />
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.LastName"></label>
+                <input asp-for="Input.LastName" value="@Model.Input.LastName" class="form-control" />
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <label asp-for="Username"></label>
                 <input asp-for="Username" class="form-control" disabled />
@@ -20,6 +48,7 @@
                 <input asp-for="Input.PhoneNumber" class="form-control" />
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
+
             <button id="update-profile-button" type="submit" class="btn btn-primary">Save</button>
         </form>
     </div>
