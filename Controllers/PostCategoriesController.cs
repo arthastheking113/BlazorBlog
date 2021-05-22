@@ -9,9 +9,11 @@ using BlazorServer.Data;
 using BlazorServer.Model;
 using BlazorServer.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BlazorServer.Controllers
 {
+    [Authorize(Roles = "Administrator")]
     public class PostCategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,8 +22,7 @@ namespace BlazorServer.Controllers
 
         public PostCategoriesController(ApplicationDbContext context,
             IImageService imageService,
-            ISlugService slugService,
-            IHttpContextAccessor haccess)
+            ISlugService slugService)
         {
             _context = context;
             _imageService = imageService;
