@@ -52,7 +52,7 @@
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
                             @foreach (var item in category)
                             {
-                                <a class="dropdown-item category-text" style="background-color: #fff0; border: none; font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; border-radius: 0; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;" href="/category/@item.Slug">@item.Name</a>
+                                <a class="dropdown-item category-text" style="background-color: #fff0; border: none; font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; border-radius: 0; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;" target="_parent" href="/category/@item.Slug">@item.Name</a>
                             }
                         </div>
                     </li>
