@@ -162,7 +162,7 @@ namespace BlazorServer.Controllers
                     postCategory.UpdateDate = DateTime.Now;
                     _context.Update(postCategory);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction("Details", "PostCategories", new { slug });
+                    return LocalRedirect($"/post/details/{slug}");
                     //return LocalRedirect($"/BlogPost/Details/{slug}");
                 }
                 catch (DbUpdateConcurrencyException)
